@@ -10,6 +10,9 @@ module dcAG.functionalTS.functional {
     }
 
     interface Monad<T> extends Applicative<T> {
+        pure(t:T): Monad<T>
+        apply<U>(f: Monad<(t:T) => U>): Monad<U>
+        map<U>(f: (t:T) => U): Monad<U>
         flatMap<U>(f: (t:T) => Monad<U>): Monad<U> 
     }
 }
