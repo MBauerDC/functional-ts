@@ -8,6 +8,9 @@ module dcAG.functionalTS.monads {
         getOrElse(t: T): T
         getOrError(): T
         map<U>(f: (t: T) => U): Maybe<U>
+        pure(t: T): Maybe<T>
+        apply<U>(f: Maybe<(t:T) => U>): Maybe<U>
+        flatMap<U>(f: (t:T) => Maybe<U>): Maybe<U>
     }
     
     class Just<T> implements Maybe<T> {
@@ -43,6 +46,8 @@ module dcAG.functionalTS.monads {
         rightOrElse(r: Right): Right
         map<U>(f: (t:Right) => U): Either<any, U>
         pure<T>(t: T): Either<any, T>
+        apply<U>(f: Either<any, (t:Right) => U>): Either<any, U> 
+        flatMap<U>(f: (t:Right) => Either<any, U>): Either<any, U>
     }
     
     class Left<T> implements Either<T, any> {
@@ -74,7 +79,7 @@ module dcAG.functionalTS.monads {
     function right<L, T>(t: T): Right<T> { return new Right(t) }
     
 
-    // READER - for "dependency-injection" Methods Requiring P from an environment E can return a Reader<E, P>
+    // READER - for "dependency-injection". Methods Requiring P from an environment E can return a Reader<E, P>
 
     class Reader<E, P> implements Monad<P> {
         private projector: (e: E) => P

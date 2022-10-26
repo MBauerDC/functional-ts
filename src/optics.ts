@@ -1,3 +1,5 @@
+import { Maybe } from "./monads.ts"
+
 module dcAG.functionalTS.optics {
 
     // LENS - for getting and updating in immutable data-structures
@@ -23,4 +25,26 @@ module dcAG.functionalTS.optics {
     }
     
     function innerLens<I, P>(p: (i:I) => P, u: (i:I, p: P) => I): InnerLens<I, P> { return lens(p, u) }
+
+    interface Prism<S, P> {
+        getMaybe(s: S): Maybe<P>
+        setIfPresent(s: S, p: P): S
+        compose<P2>(p: Prism<P, P2>): Prism<S, P2>
+    }
+
+    function prism<S, P>(g: (s:S) => Maybe<P>, c: (s: S, p: P) => S): Prism<S, P> { 
+        return {
+            getMaybe(s: S): Maybe<P> { return g(s) },
+            setIfPresent(s: S, p:P): S { return c(s, p) },
+            compose<P2>(other: Prism<P, P2>): Prism<S, P2> { 
+                return prism(
+                    (s: S) => g(s).flatMap(x => other.getMaybe(x)), 
+                    (s: S, p2: P2) => {
+                        const maybeP = g(s)
+                        return maybeP instanceof Just<P> ? c(s, maybeP.getOrError()): s
+                    }
+                )
+            }
+        }
+    }
 }
