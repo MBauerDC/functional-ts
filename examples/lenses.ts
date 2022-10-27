@@ -181,4 +181,21 @@ console.log(employeeZipCodeLens.get(employee1newZipCode))
 console.log("Entire updated employee: ")
 console.log(employee1newZipCode)
 
+
+// The whole things works with tuples, too:
+
+type Name2 = [FirstName, LastName]
+type PostalAddress2 = [StreetLine, ZipCode, City, Country]
+type Employee2 = [Name2, PostalAddress2]
+
+const employee2NameLens = GenericInnerLens.property<Employee2, Name2>(0)
+const name2FirstNameLens = GenericInnerLens.property<Name2, FirstName>(0)
+const employeeFirstNameLens = employee2NameLens.compose(name2FirstNameLens)
+
+const employee2: Employee2 = [["Michael", "Bauer"], ["Jean-Paul-Straße 26", "95445", "Bayreuth", "Germany"]]
+
+const employee2FirstName = employeeFirstNameLens.get(employee2)
+console.log(employee2FirstName)
+const employee2Changed = employeeFirstNameLens.set(employee2, "Michi")
+console.log(employee2Changed)
     
