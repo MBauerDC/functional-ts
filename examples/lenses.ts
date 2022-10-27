@@ -4,14 +4,36 @@ type FirstName = string
 type MiddleName = string
 type LastName = string
 type CompanyName = string
-type Name = { readonly firstName: FirstName, readonly middleName: MiddleName|null, readonly lastName: LastName }
+
+type Name = { 
+    readonly firstName: FirstName, 
+    readonly middleName: MiddleName|null, 
+    readonly lastName: LastName 
+}
+
 type City = string
 type StreetLine = string
 type ZipCode = string
 type Country = string
-type PostalAddress = { readonly streetLine1: StreetLine, readonly streetLine2: StreetLine|null, readonly zipCode: ZipCode, readonly city: City, readonly country: Country }
-type Company = { readonly companyName: CompanyName, readonly postalAddress: PostalAddress }
-type Person = { readonly name: Name, readonly postalAddress: PostalAddress }
+
+type PostalAddress = { 
+    readonly streetLine1: StreetLine, 
+    readonly streetLine2: StreetLine|null,
+    readonly zipCode: ZipCode, 
+    readonly city: City, 
+    readonly country: Country 
+}
+
+type Company = { 
+    readonly companyName: CompanyName, 
+    readonly postalAddress: PostalAddress 
+}
+
+type Person = { 
+    readonly name: Name, 
+    readonly postalAddress: PostalAddress 
+}
+
 type Employee = Person & { readonly company: CompanyName }
 
 const company1: Company = {
@@ -97,7 +119,7 @@ const combinedManuallyUpdatedEmployee1: Employee =
 // With lenses, we can abstract getters/setters and combine them on the fly in a type-safe way(!)
 // InnerLens<InputType, ProjectedType> is basically a getter and an updater for a field of type ProjectedType in an object of type InputType
 // Instead of manually providing the getter and updater-method, we can use 
-// the static 'property' method on GenericLens to specify that we want an InnerLens for a given InputType, ProjectedType and field-name
+// the static 'property' method on GenericInnerLens to specify that we want an InnerLens for a given InputType, ProjectedType and field-name
 
 const empAddrLens = GenericInnerLens.property<Employee,  PostalAddress>('postalAddress');
 
@@ -129,7 +151,7 @@ console.log("Employee1's zip-code value via lens: ")
 console.log(employeeZipCodeLens.get(employee1));
 
 
-// If we want to get and update a pair of fields (or nested pairs), we can zip Lenses in a type-safe way
+// If we want to get and update a pair of fields (or nested pairs), we can zip InnerLenses in a type-safe way
 const zippedLens = employeeStreetLine1Lens.zipWith(employeeZipCodeLens)
 
 // --!!-- Compiler catches when lenses cannot be correctly composed. The following will yield a compiler error: --!!--
